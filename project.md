@@ -6,17 +6,17 @@ I applied machine learning techniques to investigate their use in weather predic
 
 ## Introduction 
 
-Weather is something that scientists have been trying to predict for decades. The advent of computers has allowed meteorologists to increase the accuracy of their models providing people with more accurate information. However, these computers require significant time and energy to run the models. With the advent of artificial intelligence and its growing use in STEM, I thought it would be worthwhile to explore machine learning capabilities in weather prediction. 
+The weather has been a topic that scientists have been trying to predict for decades. The advent of computers has enabled meteorologists to improve the accuracy of their models, providing people with more reliable information. However, these computers require significant time and energy to run the models. With the advent of artificial intelligence and its growing use in STEM, it would be worthwhile to explore machine learning capabilities in weather prediction. 
 
-Using the nikhil7280/weather-type-classification dataset from kaggle, we can explore the viability of using machine learning in weather prediction. I chose to test the machine learning's capabilities in a supervised setting by running a decision tree, decision tree regression, and a classifier to see what it could predict the weather type using 10 other variables from the dataset
+Using the dataset at https://www.kaggle.com/datasets/nikhil7280/weather-type-classification, I explored the viability of machine learning for weather prediction. I chose to test machine learning's capabilities in a supervised setting by running a Decision Tree, a Random Forest Regressor, and a Classifier Model to predict weather type using 10 other variables from the dataset.
 
 ## Data
-Here is what the first few rows of the dataset of 13,200 looks like. Since I was trying to do weather prediction with this dataset, the target variable is the last column, "Weather Type" 
-<img width="2168" height="494" alt="Screenshot 2025-12-01 145420" src="https://github.com/user-attachments/assets/1ad9a73b-9d12-4d18-95ec-028466643c02" />
+Here is what the first few rows of the dataset of 13,200 looks like. Since I was trying to do weather prediction with this dataset, the target variable is the last column, "Weather Type." 
+<img width="1168" height="494" alt="Screenshot 2025-12-01 145420" src="https://github.com/user-attachments/assets/1ad9a73b-9d12-4d18-95ec-028466643c02" />
 *Figure 1: Dataset*
 
 
-Since the columns were a mix of numerical and categorical data, I changed all the values to be numerical.
+Since the columns contained both numerical and categorical data, I converted all values to numerical.
 ```python
 # Create a label encoder
 le = LabelEncoder()
@@ -30,13 +30,13 @@ map_weather_types = {'Sunny':0, 'Cloudy':1, 'Rainy':2, 'Snowy':3}
 mapper = lambda x: map_weather_types[x]
 df['Weather Type'] = df['Weather Type'].map(mapper)
 ```
-<img width="2159" height="423" alt="Screenshot 2025-12-01 145448" src="https://github.com/user-attachments/assets/086418fb-935c-48f1-b1da-2e1327a7c65d" />
+<img width="1159" height="423" alt="Screenshot 2025-12-01 145448" src="https://github.com/user-attachments/assets/086418fb-935c-48f1-b1da-2e1327a7c65d" />
 *Figure 2: Dataset with numerical values*
 
 
-After making the datset all numerical values, I split it and then scaled the data 
+After making the dataset all numerical values, I split it and then scaled the data 
 ```python
-#we can use the values attribute to extract numpy arrays from the DataFrame:
+# Extract numpy arrays from the DataFrame:
 target = "Weather Type"
 X_data=df.drop([target],axis=1).values
 y_data=df[target].values
@@ -44,8 +44,9 @@ y_data = y_data.reshape(-1,1)
 
 test_size = 0.2
 X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=test_size)
+
 #CROSS VALIDATION:
-#now, let's do a K-fold cross validation and repeat the training K times.
+#K-fold cross-validation and repeat the training K times.
 data_idx = np.arange(len(X_train)) # [0, 1, 2 ... len(X_data) - 1]
 
 kf = KFold(n_splits=5)
@@ -58,7 +59,6 @@ for idx_train, idx_val in kf.split(data_idx):
     print(idx_train.shape, idx_val.shape)
     fold = fold + 1
 
-#now, let's do a K-fold cross validation and repeat the training K times using a pipeline
 data_idx = np.arange(len(X_train)) # [0, 1, 2 ... len(X_data) - 1]
 
 kf = KFold(n_splits=5)
@@ -84,14 +84,14 @@ for idx_train, idx_val in kf.split(data_idx):
         best_model = copy.deepcopy(pipe)
         best_score = score
 
-#test the best model from cross validation:
+# Test the best model from cross-validation:
 y_pred_lr = best_model.predict(X_test)
 score = np.sqrt(np.mean((y_test-y_pred_lr)**2))
 ```
 
 
-## Modelling
-I wanted to test different methods of machine learning predictions, so I chose to use a Decision Tree, Random Forest Regressor, and a Classifer Model. I chose to use these three models because I had 10 variables I was trying to use as input variables to get to my target variable, and these three models can handle multiple features well. 
+## Modeling
+I wanted to test different machine learning methods, so I chose a Decision Tree, a Random Forest Regressor, and a Classifier Model. I chose these three models because I had 10 input variables and wanted to use them to predict my target variable, and they can handle multiple features well. I also wanted to add in a regressor model, so it could tell me about how my model was working with the data, and not necessarily its accuracy, which is what I wanted to see from the Decision Tree and Classifier Models. 
 
 Decision Tree
 ```python
@@ -145,61 +145,75 @@ mlp.fit(X_classifier_train_scale, y_classifier_train)
 
 ## Results
 
-Decision Tree Results:
-Letting the decision tree model run without a max depth allowed the model to fit the dataset with an accuracy of 89%. 
-Accuracy: 0.8928030303030303
-<img width="1192" height="790" alt="image" src="https://github.com/user-attachments/assets/b0c19a8d-ff5e-4605-acb7-def91ac021c1" />
+### Decision Tree Results:
+Running the decision tree model without a max depth allowed it to fit the dataset with an accuracy of 91%. 
+Accuracy: 0.9140151515151516
+<img width="1193" height="790" alt="image" src="https://github.com/user-attachments/assets/463990fe-d36b-45d3-9dea-ff3253c9830c" />
+
 *Figure 3: This shows the overfitted decision tree classifier model results.*
 
 
-Accuracy with Max Depth of 3: 0.859469696969697
-<img width="1570" height="1175" alt="image" src="https://github.com/user-attachments/assets/a0fc4c78-a04f-4bb0-a767-9ff7b1e9f44c" />
+Accuracy with Max Depth of 3: 0.8776515151515152
+<img width="1570" height="1175" alt="image" src="https://github.com/user-attachments/assets/d6639807-8600-4baa-a7ea-f30f478f98c1" />
+
 *Figure 4: This shows the fitted decision tree classifier model with a max depth = 3*
 
-Random Forest Regressor Results: 
-With a R^2 score of 0.87, the model did pretty well. Even though there are red dots that vary from the fit line, the model does not show density of the dots well, which matters in a dataset of 13,200 values. The R^2 score being relatively high shows the model does have some outliers/errors, but is not guessing. 
-<img width="680" height="1112" alt="Screenshot 2025-12-01 134814" src="https://github.com/user-attachments/assets/c4624761-17d3-447e-8803-c3e5f5ad9442" />
-
-*Figure 5: Comparing dataset values vs model predicted values.*
-
-I then wanted to see which of the features was influencing the model the most. Surprisingly the visibility distance was responsible for about 50% of the model's choice
+I then wanted to see which feature was influencing the model the most. Surprisingly, the visibility distance was responsible for about 50% of the model's choice
 <img width="1001" height="650" alt="image" src="https://github.com/user-attachments/assets/510dfe5d-18a8-47b6-998d-144455e091ed" />
-*Figure 6: Bar chart showing feature importance*
+*Figure 5: Bar chart showing feature importance*
+
+Checking the ROC of the model
+
+<img width="691" height="547" alt="image" src="https://github.com/user-attachments/assets/854b0935-4741-4854-a0d3-28c7049541f6" />
+
+*Figure 6: ROC scores of each of the weather types in the model*
+
+### Random Forest Regressor Results: 
+With an R^2 score of 0.889722788377116, the model did pretty well. Even though there are red dots that deviate from the fit line, the model does not capture the dots' density well, which matters in a dataset of 13,200 values. The R^2 score being relatively high shows the model does have some outliers/errors, but it is not guessing. 
+
+<img width="536" height="525" alt="image" src="https://github.com/user-attachments/assets/bec91b26-12be-4122-9635-fe6ab483c71a" />
+
+*Figure 7: Comparing dataset values vs model predicted values.*
 
 
-Classifier Model Results:
+### Classifier Model Results:
 
 <img width="680" height="580" alt="image" src="https://github.com/user-attachments/assets/4ad1cecd-e182-4f30-bd2a-0ff83fa52aa7" />
 
-*Figure 7: Bar chart showing model probability of each Weather Type outcome*
+*Figure 8: Bar chart showing model probability of each Weather Type outcome*
 
 Checking the accuracy of the model
 Prediction accuracy: 90.41666666666667 %
 <img width="686" height="547" alt="image" src="https://github.com/user-attachments/assets/330d50f5-dfcb-4e6c-9d8d-1f7d85696755" />
 
-*Figure 8: Scatterplot showing prediction accuracy of the predicted Y values vs testing Y values*
+*Figure 9: Scatterplot showing prediction accuracy of the predicted Y values vs testing Y values*
 
 Checking the ROC of the model 
 
 <img width="691" height="547" alt="image" src="https://github.com/user-attachments/assets/763542b7-929f-4f40-9d16-a00af1edf9e5" />
 
-*Figure 9: ROC scores of each of the weather types in the model*
+*Figure 10: ROC scores of each of the weather types in the model*
 
 
 ## Discussion
-
-
+The Decision Tree (Figure 3) and Classifier Model (Figures 8 & 9) performed at around 90% accuracy, which is on the lower end of computer model accuracy for 5-day forecasts [1]. The ROC curves in both models (Figures 6 & 10) also indicate that the models perform very well. The Random Forest Regressor Model (Figure 7) captured about 89% of the target's variability. So all three models performed very well. However, the Decision Tree & Classifier Models are the more important metrics for my question about using machine learning to predict weather type, as they provide prediction accuracy numbers. 
+I was very surprised to see that visibility was such an important feature, as shown in Figure 5. I thought temperature or atmospheric pressure would play a bigger role in the model sorting.
+Overall, I was very impressed with the model's results. 
 
 ## Conclusion
 
-Here is a brief summary. From this work, the following conclusions can be made:
-* first conclusion
-* second conclusion
+Here is a summary. From this work, the following conclusions can be made:
+* Machine learning models are a viable tool in being able to identify or predict weather types, operating at around a 90% accuracy, which is on the lower end of computer model accuracy for forecasts [1]
+* The MLP Classifier worked well, having a near-perfect AUC score, and the Decision Tree had an AUC score of about 0.94, meaning they are well-performing models. 
 
-Here is how this work could be developed further in a future project.
+Here is how this work could be developed further in a future project:
+* Expanding or contracting the number of variables used. Making the model more complex or simpler could further affect its accuracy. More specific data, like wind direction, could decrease the accuracy of the model, but it would make it more realistic 
+* If we could add more atmospheric dynamics variables to the model, that would make it more in line with what computer models run. [2]
+
 
 ## References
-[1] DALL-E 3
+[1] https://www.nesdis.noaa.gov/about/k-12-education/weather-forecasting/how-reliable-are-weather-forecasts
+[2] https://www.weather.gov/about/models 
 
 [back](./)
 
